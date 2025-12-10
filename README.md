@@ -55,7 +55,7 @@ availability and safety.
 ### 2. Start the Backend (Flask API)
 Run the following command inside the backend folder: python flask_app.py
 
-### 2. Start the Backend (Flask API)
+### 2. Start the Frontend (React)
 start the frontend :
 - cd bike-dashboard
 - npm install
