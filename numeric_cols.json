@@ -1,0 +1,1 @@
+["avg_accel_magnitude", "std_accel_magnitude", "max_jerk", "vibration_index", "mean_speed", "max_speed", "total_distance_m", "altitude_gain_m", "num_stops", "suspicious_flag", "speed_variability", "vibration_to_speed_ratio", "stops_per_km", "altitude_rate"]
