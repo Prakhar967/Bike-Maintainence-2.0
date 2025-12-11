@@ -52,14 +52,26 @@ availability and safety.
 - signin password : prashiasthana
 - Create the bucket required for sensor data storage.
 
-### 2. Start the Backend (Flask API)
+### 2. Run postgre SQL
+  - install postgreSQL
+  - Create a new Database after all the prerequisite setup
+  - open the newly created database
+  - click on the query tool
+  - click on open file
+  - select **.SQL** database file that i have provided in github
+  - click on execute
+
+### 3. Start the Backend (Flask API)
 Run the following command inside the backend folder: python flask_app.py
 
-### 2. Start the Frontend (React)
+### 4. Start the Frontend (React)
 start the frontend :
 - cd bike-dashboard
 - npm install
 - npm start
 
+## Improvements to be done
+  - In the Bike Maintenance System, I wanted to implement the routing algorithm properly so the maintenance crew gets the correct order of bikes to visit. I started it, but the dataset had too many critical bikes and time was less, so the routing was not completed. This will be improved later.
+    
 ## Author
 - Prakhar Asthana
