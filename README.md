@@ -72,6 +72,7 @@ start the frontend :
 
 ## Improvements to be done
   - In the Bike Maintenance System, I wanted to implement the routing algorithm properly so the maintenance crew gets the correct order of bikes to visit. I started it, but the dataset had too many critical bikes and time was less, so the routing was not completed. This will be improved later.
+  - I have to further imporve the dataset to make prediction more good so that different bike_maintenance type should be mentioned.
     
 ## Author
 - Prakhar Asthana
