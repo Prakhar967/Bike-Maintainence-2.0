@@ -1,6 +1,7 @@
 import pandas as pd
+import numpy as np
 import psycopg2
-import pickle
+import joblib,pickle
 from connect_influx import client
 
 query_api = client.query_api()
@@ -15,44 +16,26 @@ from(bucket: "BikeData")
   |> keep(columns: ["_time", "bike_id", "avg_accel_magnitude", "std_accel_magnitude", "max_jerk",
                     "vibration_index", "mean_speed", "max_speed", "total_distance_m",
                     "altitude_gain_m", "num_stops", "weather", "suspicious_flag",
-                    "speed_variability", "vibration_to_speed_ratio", "stops_per_km", "altitude_rate",
                     "latitude","longitude"])
   |> sort(columns: ["_time"], desc: false)
 '''
 
-
 result = query_api.query_data_frame(query)
-
 
 # Columns that is to be used for running the model and predicting
 feature_cols = [ "avg_accel_magnitude", "std_accel_magnitude", "max_jerk",
                 "vibration_index", "mean_speed", "max_speed", "total_distance_m",
                  "altitude_gain_m", "num_stops", "weather", "suspicious_flag",
-                "speed_variability", "vibration_to_speed_ratio",
-                 "stops_per_km", "altitude_rate"
                 ]
 df = result[feature_cols].copy()
 
+df['speed_variability'] = df['std_accel_magnitude'] / (df['mean_speed'] + 1e-5)
+df['vibration_to_speed_ratio'] = df['vibration_index'] / (df['mean_speed'] + 1e-5)
+df['stops_per_km'] = df['num_stops'] / ((df['total_distance_m'] / 1000) + 1e-5)
+df['altitude_rate'] = df['altitude_gain_m'] / (df['total_distance_m'] + 1e-5)
+
 #Loading the trained model
-with open("xgb_bike_model.pkl", "rb") as model_file:
-    model = pickle.load(model_file)
-
-with open("scaler.pkl", "rb") as scaler_file:
-    scaler = pickle.load(scaler_file)
-
-
-# selecting column that needs to be scaled
-numeric_cols = ["avg_accel_magnitude", "std_accel_magnitude", "max_jerk",
-                "vibration_index", "mean_speed", "max_speed", "total_distance_m",
-                "altitude_gain_m", "num_stops", "suspicious_flag",
-                "speed_variability", "vibration_to_speed_ratio",
-                "stops_per_km", "altitude_rate"
-                ]
-scaled_values = scaler.transform(df[numeric_cols])
-for i, col in enumerate(numeric_cols):
-    df[col] = scaled_values[:, i]
-
-import numpy as np
+model = joblib.load('xgb_best_model.joblib')
 
 X = df.astype(float).to_numpy()
 
@@ -61,7 +44,7 @@ pred_probs = model.predict_proba(X)
 
 
 import json
-with open("class_names.json","r") as f:
+with open("class_names_new.json","r") as f:
     class_names = json.load(f)
 
 df["predicted_class"] = [class_names[i] for i in pred_classes]

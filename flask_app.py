@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 import psycopg2
 from flask_cors import CORS
-from math import radians, sin, cos, sqrt, atan2
+
 
 app = Flask(__name__)
 CORS(app)
@@ -12,6 +12,7 @@ conn = psycopg2.connect(host = "localhost",database = "bike_maintenance",user = 
 @app.route('/')
 def home():
     return jsonify({"message": "Flask connected successfully to Postgres SQL"})
+
 @app.route("/sensor_data")
 def sensor_data():
     cur = conn.cursor()
@@ -37,57 +38,9 @@ def sensor_data():
     return jsonify(data)
 
 
-def distance(lat1, lon1, lat2, lon2):
-    R = 6371
-    dlat = radians(lat2 - lat1)
-    dlon = radians(lon2 - lon1)
-    a = sin(dlat/2)**2 + cos(radians(lat1))*cos(radians(lat2))*sin(dlon/2)**2
-    return R * 2 * atan2(sqrt(a), sqrt(1-a))
-
-
-# -----------to do later----------------
-# @app.route("/simple_route")
-# def simple_route():
-#     # Maintenance center (fixed)
-#     maintenance_center = {
-#         "lat": 26.7606,
-#         "lon": 83.3732,
-#         "name": "Maintenance Hub"
-#     }
-#     cur = conn.cursor()
-#     cur.execute("""
-#         SELECT bike_id, latitude, longitude
-#         FROM bike_predictions
-#         WHERE predicted_label != 'Good'
-#     """)
-#     rows = cur.fetchall()
-#
-#     bikes = [{"bike_id": r[0], "lat": float(r[1]), "lon": float(r[2])} for r in rows]
-#     route = []
-#     current_lat = maintenance_center["lat"]
-#     current_lon = maintenance_center["lon"]
-#     while bikes:
-#         nearest = min(
-#             bikes,
-#             key=lambda b: distance(current_lat, current_lon, b["lat"], b["lon"])
-#         )
-#         route.append({
-#             "bike_id": nearest["bike_id"],
-#             "lat": nearest["lat"],
-#             "lon": nearest["lon"],
-#             "stay_minutes": 10
-#         })
-#         current_lat = nearest["lat"]
-#         current_lon = nearest["lon"]
-#         bikes.remove(nearest)
-#     return jsonify({
-#         "start_point": maintenance_center,
-#         "route": route
-#     })
-
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host = "0.0.0.0", port = 5001,debug=True)
 
 
 
